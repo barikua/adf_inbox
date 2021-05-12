@@ -1,0 +1,9 @@
+{
+	"name": "inbox",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "811830c9-10bd-4797-b636-a5a39517f9d1",
+		"tenantId": "b4e61eb8-dc3c-44d5-baa6-d2a65f53923b"
+	}
+}
