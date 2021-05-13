@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "taxi.snappy.parquet",
 				"folderPath": "yellow/puYear=2021/puMonth=9",
 				"fileSystem": "inbox"
 			},
