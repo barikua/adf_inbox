@@ -1,0 +1,21 @@
+{
+	"name": "NYCTaxiY",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OpenDatasets",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "part-00005-tid-8898858832658823408-a1de80bd-eed3-4d11-b9d4-fa74bfbd47bc-426324-135.c000.snappy.parquet",
+				"folderPath": "yellow/puYear=2021/puMonth=9",
+				"container": "nyctlc"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
