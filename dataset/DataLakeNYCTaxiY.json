@@ -1,0 +1,20 @@
+{
+	"name": "DataLakeNYCTaxiY",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "yellow/puYear=2021/puMonth=9",
+				"fileSystem": "inbox"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
