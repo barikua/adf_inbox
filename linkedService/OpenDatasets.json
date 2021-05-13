@@ -5,13 +5,7 @@
 		"annotations": [],
 		"type": "AzureBlobStorage",
 		"typeProperties": {
-			"connectionString": "DefaultEndpointsProtocol=https;AccountName=azureopendatastorage;",
-			"encryptedCredential": "@{linkedService().pwd}"
-		},
-		"parameters": {
-			"pwd": {
-				"type": "String"
-			}
+			"sasUri": "https://azureopendatastorage.blob.core.windows.net"
 		}
 	}
 }
