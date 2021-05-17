@@ -8,11 +8,11 @@
 		"DataLake_accountKey": {
 			"value": ""
 		},
-		"OpenDatasets_sasUri": {
-			"value": ""
-		},
 		"DataLake_properties_typeProperties_url": {
 			"value": "https://dlinbox.dfs.core.windows.net"
+		},
+		"OpenDatasets_sasUri": {
+			"value": ""
 		}
 	}
 }

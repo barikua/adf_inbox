@@ -11,13 +11,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'DataLake'"
 		},
-		"OpenDatasets_sasUri": {
-			"type": "secureString",
-			"metadata": "Secure string for 'sasUri' of 'OpenDatasets'"
-		},
 		"DataLake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://dlinbox.dfs.core.windows.net"
+		},
+		"OpenDatasets_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'OpenDatasets'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -49,11 +49,11 @@
 					"DataLake_accountKey": {
 						"value": "[parameters('DataLake_accountKey')]"
 					},
-					"OpenDatasets_sasUri": {
-						"value": "[parameters('OpenDatasets_sasUri')]"
-					},
 					"DataLake_properties_typeProperties_url": {
 						"value": "[parameters('DataLake_properties_typeProperties_url')]"
+					},
+					"OpenDatasets_sasUri": {
+						"value": "[parameters('OpenDatasets_sasUri')]"
 					}
 				}
 			},
