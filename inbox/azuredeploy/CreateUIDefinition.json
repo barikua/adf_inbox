@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "config": {
+            "isWizard": true,
+            "basics": { }
+        },
+        "basics": [
+            {
+                "name": "projectName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Project Name",
+                "defaultValue": "",
+                "toolTip": "Project's name to be used as prefix for all services created by this template.",
+                "constraints": {
+                    "required": true,
+                    "validations":[
+                        {
+                            "regex": "^[a-z0-9A-Z]{3,16}$",
+                            "message": "Only alphanumeric characters are allowed, and the value must be 1-16 characters long."
+                        }
+                    ]
+                }
+            }
+        ],
+        "steps": [
+            {
+                "name": "storageConfig",
+                "type": "Microsoft.Common.Section",
+                "label": "Storage Account",
+                "elements": [
+                    {
+                        "name": "multiStorage",
+                        "type": "Microsoft.Storage.MultiStorageAccountCombo",
+                        "label": {
+                            "prefix": "Storage account prefix",
+                            "type": "Storage account type"
+                        },
+                        "toolTip": {
+                            "prefix": "A naming prefix for all storage account to be created by this template.",
+                            "type": "Type of storage account to be created. Standard Locally Redundant is recommended."
+                        },
+                        "defaultValue": {
+                            "prefix": "[concat(toLower(steps('basics').projectName), 'storage')]",
+                            "type": "Standard_LRS"
+                        },
+                        "count": 2,
+                        "visible": true
+                    }
+                ],
+                "visible": true
+            }
+        ],
+        "outputs": {
+            "storageAccountNamePrefix": "[steps('storageConfig').multiStorage.prefix]",
+            "storageAccountType": "[steps('storageConfig').multiStorage.type]",
+            "location": "[location()]"
+        }
+    }
+}

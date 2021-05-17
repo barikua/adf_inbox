@@ -1,0 +1,489 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "projectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of a project to be used in services naming."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account location."
+            },
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "storageSku": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": ["Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS", "Standard_GZRS", "Standard_RAGZRS"],
+            "metadata": {
+                "description": "Defines the type of storage account to use for the data lake store."
+            }
+        },
+		"OpenDatasets_sasUri": {
+			"type": "string",
+			"metadata": {
+                "description":"Open dataset uri. For example, https://azureopendatastorage.blob.core.windows.net/nyctlc"
+            },
+			"defaultValue": "https://azureopendatastorage.blob.core.windows.net/nyctlc"
+        }
+    },
+    "functions": [],
+    "variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', variables('factoryName'))]",
+        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+        "projectName": "[toLower(parameters('projectName'))]",
+        "storageAccountName": "[concat(variables('projectName'), 'storage')]",
+        "factoryName": "[concat(parameters('projectName'), 'factory')]"
+    },
+    "resources": [{
+        "name": "[variables('storageAccountName')]",
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2019-06-01",
+        "location": "[parameters('location')]",
+        "kind": "StorageV2",
+        "sku": {
+            "name": "[parameters('storageSku')]"
+        },
+        "properties": {
+            "encryption": {
+                "keySource": "Microsoft.Storage",
+                "services": {
+                    "blob": {
+                        "enabled": true
+                    },
+                    "file": {
+                        "enabled": true
+                    }
+                }
+            },
+            "isHnsEnabled": true,
+            "supportsHttpsTrafficOnly": true
+        }
+    },
+      {
+        "type": "Microsoft.DataFactory/factories",
+        "apiVersion": "2018-06-01",
+        "name": "[variables('factoryName')]",
+        "location": "[parameters('location')]",
+        "properties": {},
+        "identity": {
+          "type": "SystemAssigned"
+        },
+        "resources": [
+    
+		{
+			"name": "[concat(variables('factoryName'), '/', parameters('projectName'), 'OpenDataSet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OpenDatasets",
+					"type": "LinkedServiceReference"
+				},
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "part-00005-tid-8898858832658823408-a1de80bd-eed3-4d11-b9d4-fa74bfbd47bc-426324-135.c000.snappy.parquet",
+						"folderPath": "yellow/puYear=2021/puMonth=9",
+						"container": "nyctlc"
+					},
+					"compressionCodec": "snappy"
+				}
+			},
+			"dependsOn": [
+                "[variables('factoryId')]",
+				"[concat(variables('factoryId'), '/linkedServices/OpenDatasets')]"
+			]
+		},
+		{
+			"name": "[concat(variables('factoryName'), '/OpenDatasets')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[concat(parameters('OpenDatasets_sasUri'), '? ')]"
+				}
+			},
+            "dependsOn":[
+				"[variables('factoryId')]"
+            ]
+		},
+		{
+			"name": "[concat(variables('factoryName'), '/DataLake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "AzureBlobFS",
+				"typeProperties": {
+                    "url": "[concat('https://', variables('storageAccountName'),'.dfs.core.windows.net')]",
+					"accountKey": {
+						"type": "SecureString",
+                        "value": "[listKeys(variables('storageAccountId'), '2019-06-01').keys[0].value]"
+					}
+				}
+			},
+            "dependsOn":[
+				"[variables('factoryId')]"
+            ]
+		},
+		{
+			"name": "[concat(variables('factoryName'), '/', parameters('projectName'), 'DataLakeDataSet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "taxi.snappy.parquet",
+						"folderPath": "yellow",
+						"fileSystem": "[toLower(variables('factoryName'))]"
+					},
+					"compressionCodec": "snappy"
+				}
+			},
+			"dependsOn": [
+                "[variables('factoryId')]",
+				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
+			]
+		},
+		{
+			"name": "[concat(variables('factoryName'), '/CopyPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data",
+						"type": "Copy",
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "vendorID",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "vendorID",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "tpepPickupDateTime",
+											"type": "DateTime",
+											"physicalType": "INT96"
+										},
+										"sink": {
+											"name": "tpepPickupDateTime",
+											"type": "DateTime",
+											"physicalType": "INT_96"
+										}
+									},
+									{
+										"source": {
+											"name": "tpepDropoffDateTime",
+											"type": "DateTime",
+											"physicalType": "INT96"
+										},
+										"sink": {
+											"name": "tpepDropoffDateTime",
+											"type": "DateTime",
+											"physicalType": "INT_96"
+										}
+									},
+									{
+										"source": {
+											"name": "passengerCount",
+											"type": "Int32",
+											"physicalType": "INT32"
+										},
+										"sink": {
+											"name": "passengerCount",
+											"type": "Int32",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "tripDistance",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "tripDistance",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "puLocationId",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "puLocationId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "doLocationId",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "doLocationId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "startLon",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "startLon",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "startLat",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "startLat",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "endLon",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "endLon",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "endLat",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "endLat",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "rateCodeId",
+											"type": "Int32",
+											"physicalType": "INT32"
+										},
+										"sink": {
+											"name": "rateCodeId",
+											"type": "Int32",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "storeAndFwdFlag",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "storeAndFwdFlag",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "paymentType",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "paymentType",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "fareAmount",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "fareAmount",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "extra",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "extra",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "mtaTax",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "mtaTax",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "improvementSurcharge",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "improvementSurcharge",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "tipAmount",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "tipAmount",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "tollsAmount",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "tollsAmount",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "totalAmount",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "totalAmount",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "[concat(parameters('projectName'), 'OpenDataSet')]",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "[concat(parameters('projectName'), 'DataLakeDataSet')]",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				]
+			},
+			"dependsOn": [
+                "[variables('factoryId')]",
+				"[concat(variables('factoryId'), '/datasets/', parameters('projectName'), 'OpenDataSet')]",
+				"[concat(variables('factoryId'), '/datasets/', parameters('projectName'), 'DataLakeDataSet')]"
+			]
+		}]
+        }],
+    "outputs": {
+        "storageAccountName": {
+            "type": "string",
+            "value": "[variables('storageAccountName')]"
+        }
+    }
+}
