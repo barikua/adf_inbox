@@ -85,8 +85,16 @@
 						"referenceName": "CopyBlobToSQL",
 						"type": "DataFlowReference",
 						"parameters": {
+							"flield1": "''",
 							"field1": "['vendorID','doLocationId']"
 						}
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "DataLake",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "dls2/stage"
 					},
 					"compute": {
 						"coreCount": 8,
