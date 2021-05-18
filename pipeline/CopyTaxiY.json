@@ -62,7 +62,7 @@
 				]
 			},
 			{
-				"name": "Data flow",
+				"name": "Data flow1",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -83,7 +83,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "CopyBlobToSQL",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"field1": "['vendorID','doLocationId']"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
