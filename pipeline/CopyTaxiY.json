@@ -20,7 +20,10 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "yellow/puYear=2020",
+							"wildcardFolderPath": {
+								"value": "@concat('yellow/',pipeline().parameters.path)",
+								"type": "Expression"
+							},
 							"wildcardFileName": "*.snappy.parquet",
 							"enablePartitionDiscovery": false
 						}
@@ -313,6 +316,11 @@
 				]
 			}
 		],
+		"parameters": {
+			"path": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
