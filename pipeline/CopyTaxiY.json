@@ -24,7 +24,7 @@
 								"value": "@concat('yellow/',pipeline().parameters.path)",
 								"type": "Expression"
 							},
-							"wildcardFileName": "*.snappy.parquet",
+							"wildcardFileName": "*.parquet",
 							"enablePartitionDiscovery": false
 						}
 					},
