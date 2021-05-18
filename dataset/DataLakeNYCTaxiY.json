@@ -12,7 +12,7 @@
 				"type": "AzureBlobFSLocation",
 				"fileName": "taxi.snappy.parquet",
 				"folderPath": "yellow",
-				"fileSystem": "inbox"
+				"fileSystem": "dls2"
 			},
 			"compressionCodec": "snappy"
 		},
