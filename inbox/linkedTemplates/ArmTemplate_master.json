@@ -13,7 +13,7 @@
 		},
 		"DataLake_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://dlinbox.dfs.core.windows.net"
+			"defaultValue": "https://dl2inbox.dfs.core.windows.net"
 		},
 		"OpenDatasets_sasUri": {
 			"type": "secureString",

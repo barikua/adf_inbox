@@ -13,7 +13,7 @@
 		},
 		"DataLake_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://dlinbox.dfs.core.windows.net"
+			"defaultValue": "https://dl2inbox.dfs.core.windows.net"
 		},
 		"OpenDatasets_sasUri": {
 			"type": "secureString",
@@ -70,7 +70,7 @@
 						"type": "AzureBlobFSLocation",
 						"fileName": "taxi.snappy.parquet",
 						"folderPath": "yellow",
-						"fileSystem": "inbox"
+						"fileSystem": "dls2"
 					},
 					"compressionCodec": "snappy"
 				},
@@ -130,7 +130,10 @@
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
 									"recursive": true,
-									"wildcardFolderPath": "yellow",
+									"wildcardFolderPath": {
+										"value": "@concat('yellow/',pipeline().parameters.path)",
+										"type": "Expression"
+									},
 									"wildcardFileName": "*.snappy.parquet",
 									"enablePartitionDiscovery": false
 								}
@@ -425,6 +428,11 @@
 						]
 					}
 				],
+				"parameters": {
+					"path": {
+						"type": "string"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [

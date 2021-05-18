@@ -6,18 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "inbox"
-		},
-		"DataLake_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'DataLake'"
-		},
-		"DataLake_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://dl2inbox.dfs.core.windows.net"
-		},
-		"OpenDatasets_sasUri": {
-			"type": "secureString",
-			"metadata": "Secure string for 'sasUri' of 'OpenDatasets'"
 		}
 	},
 	"variables": {
@@ -333,15 +321,13 @@
 						"inputs": [
 							{
 								"referenceName": "NYCTaxiY",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "DataLakeNYCTaxiY",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					}
@@ -354,7 +340,6 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/NYCTaxiY')]",
 				"[concat(variables('factoryId'), '/datasets/DataLakeNYCTaxiY')]"
 			]
 		},
@@ -385,32 +370,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/NYCTaxiY')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "OpenDatasets",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "part-00000-tid-8898858832658823408-a1de80bd-eed3-4d11-b9d4-fa74bfbd47bc-426339-98.c000.snappy.parquet",
-						"folderPath": "yellow/puYear=2016/puMonth=9",
-						"container": "nyctlc"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/OpenDatasets')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DataLake')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -418,24 +377,11 @@
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('DataLake_properties_typeProperties_url')]",
+					"url": "https://dl2inbox.dfs.core.windows.net",
 					"accountKey": {
 						"type": "SecureString",
-						"value": "[parameters('DataLake_accountKey')]"
+						"value": "**********"
 					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/OpenDatasets')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"sasUri": "[parameters('OpenDatasets_sasUri')]"
 				}
 			},
 			"dependsOn": []

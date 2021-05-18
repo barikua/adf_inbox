@@ -9,7 +9,7 @@
 			"value": ""
 		},
 		"DataLake_properties_typeProperties_url": {
-			"value": "https://dlinbox.dfs.core.windows.net"
+			"value": "https://dl2inbox.dfs.core.windows.net"
 		},
 		"OpenDatasets_sasUri": {
 			"value": ""
