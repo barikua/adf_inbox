@@ -85,7 +85,7 @@
 						"referenceName": "CopyBlobToSQL",
 						"type": "DataFlowReference",
 						"parameters": {
-							"flield1": "qqq",
+							"flield1": "'qqq'",
 							"field1": "['vendorID','doLocationId']"
 						}
 					},
