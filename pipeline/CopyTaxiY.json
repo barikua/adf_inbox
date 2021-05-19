@@ -50,7 +50,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "NYCTaxiY",
+						"referenceName": "OpenDatasetNYCTaxiY",
 						"type": "DatasetReference"
 					}
 				],
@@ -106,6 +106,9 @@
 		"parameters": {
 			"path": {
 				"type": "string"
+			},
+			"fields": {
+				"type": "array"
 			}
 		},
 		"annotations": []
