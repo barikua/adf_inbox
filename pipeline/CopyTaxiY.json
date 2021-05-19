@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data",
+				"name": "Copy data to DL",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -62,11 +62,11 @@
 				]
 			},
 			{
-				"name": "Data flow1",
+				"name": "Copy data to SQL pool",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Copy data",
+						"activity": "Copy data to DL",
 						"dependencyConditions": [
 							"Succeeded"
 						]
