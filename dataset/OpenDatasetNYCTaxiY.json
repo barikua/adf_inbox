@@ -1,5 +1,5 @@
 {
-	"name": "NYCTaxiY",
+	"name": "OpenDatasetNYCTaxiY",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "OpenDatasets",
