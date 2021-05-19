@@ -85,7 +85,10 @@
 						"referenceName": "CopyBlobToSQL",
 						"type": "DataFlowReference",
 						"parameters": {
-							"field1": "['vendorID','doLocationId']"
+							"fields": {
+								"value": "@pipeline().parameters.fields",
+								"type": "Expression"
+							}
 						}
 					},
 					"staging": {
