@@ -5,7 +5,13 @@
 		"factoryName": {
 			"value": "inbox"
 		},
+		"AzureSynapseAnalytics1_connectionString": {
+			"value": ""
+		},
 		"DataLake_accountKey": {
+			"value": ""
+		},
+		"SqlServer_connectionString": {
 			"value": ""
 		},
 		"DataLake_properties_typeProperties_url": {
