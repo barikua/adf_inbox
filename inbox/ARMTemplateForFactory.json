@@ -378,7 +378,6 @@
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
-									"maxConcurrentConnections": 16,
 									"recursive": true,
 									"wildcardFolderPath": {
 										"value": "@concat('yellow/',pipeline().parameters.path)",
@@ -390,14 +389,11 @@
 							},
 							"sink": {
 								"type": "SqlServerSink",
-								"writeBatchSize": 16000,
-								"maxConcurrentConnections": 4,
 								"sqlWriterStoredProcedureName": "[[dbo].[CopyToTable]",
 								"sqlWriterTableType": "TableType",
 								"storedProcedureTableTypeParameterName": "data"
 							},
 							"enableStaging": false,
-							"parallelCopies": 4,
 							"translator": {
 								"type": "TabularTranslator",
 								"typeConversion": true,
