@@ -25,6 +25,7 @@
 						],
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
+							"maxConcurrentConnections": 16,
 							"recursive": true,
 							"wildcardFolderPath": {
 								"value": "@concat('yellow/',pipeline().parameters.path)",
@@ -36,6 +37,7 @@
 					},
 					"sink": {
 						"type": "SqlServerSink",
+						"maxConcurrentConnections": 4,
 						"sqlWriterStoredProcedureName": "[dbo].[CopyToTable]",
 						"sqlWriterTableType": "TableType",
 						"storedProcedureTableTypeParameterName": "data"
