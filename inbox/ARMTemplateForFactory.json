@@ -390,12 +390,14 @@
 							},
 							"sink": {
 								"type": "SqlServerSink",
+								"writeBatchSize": 16000,
 								"maxConcurrentConnections": 4,
 								"sqlWriterStoredProcedureName": "[[dbo].[CopyToTable]",
 								"sqlWriterTableType": "TableType",
 								"storedProcedureTableTypeParameterName": "data"
 							},
 							"enableStaging": false,
+							"parallelCopies": 4,
 							"translator": {
 								"type": "TabularTranslator",
 								"typeConversion": true,
