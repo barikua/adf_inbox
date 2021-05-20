@@ -5,8 +5,8 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=khpi2020.database.windows.net;initial catalog=inbox;user id=sqladminuser",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIklOQk9YX2QyZDRiODlmLWZkOWQtNDU3Mi05Y2ZmLWYzZmFmY2QxNzY4YSINCn0="
+			"connectionString": "integrated security=False;data source=khpi2020.database.windows.net;initial catalog=inbox;user id=khpi2020",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIklOQk9YXzUzNGQ2NDliLTM1ZDEtNGY2Ni05YWY4LWFjMWE1MDJhZWI5MyINCn0="
 		}
 	}
 }
