@@ -70,9 +70,6 @@
 		"parameters": {
 			"path": {
 				"type": "string"
-			},
-			"fields": {
-				"type": "array"
 			}
 		},
 		"annotations": []
